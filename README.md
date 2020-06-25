@@ -1,4 +1,4 @@
-# Hipsta-conta-a-nova-Inqusi-o.
+# hipsta_contra_inquisicao
 Jogo criado com o utilização da biblioteca p5 para a imersão game dev da Alula em 2020
 
 ## Nome do Jogo
