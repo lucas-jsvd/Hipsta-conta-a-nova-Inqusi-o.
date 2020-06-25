@@ -1,5 +1,5 @@
 class Heroi extends Personagem {
-  constructor(imagem, proporcao, num_colunas, num_linhas) {
+  constructor(imagem, som_pulo, proporcao, num_colunas, num_linhas) {
     super(imagem, proporcao, num_colunas, num_linhas)
     this.vel_pulo = 0;
     this.alt_max_pulo = 0;
@@ -8,6 +8,7 @@ class Heroi extends Personagem {
     this.quant_pulo_max = 2
     this.quant_pulo_atual = 0
     this.pos_pulo_y = 0
+    this.som_pulo = som_pulo
   }
 
 
@@ -22,6 +23,7 @@ class Heroi extends Personagem {
       this.pulando = true;
       this.no_chao = false;
       this.quant_pulo_atual++;
+      this.som_pulo.play()
     }
   }
 
