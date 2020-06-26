@@ -1,19 +1,27 @@
 let img_personagem;
 let img_background;
+let img_game_over;
 let img_ini_gotinha;
-let fr = 45;
+let img_ini_troll;
+let img_ini_got_voadora;
+let fr = 30;
 let som_fundo;
 let som_pulo;
 let gravidade;
 let heroi;
-let ini_gotinha;
+let lista_inimigos = [];
 let cenario;
 let cenario2;
+let pontuacao = 0;
+let pontuacao_adcional = 4 / fr;
 
 function preload() {
   img_background = loadImage("imagens/cenario/floresta.png");
+  img_game_over = loadImage("imagens/telas/game-over.png");
   img_heroi = loadImage("imagens/personagem/correndo.png");
   img_ini_gotinha = loadImage("imagens/inimigos/gotinha.png");
+  img_ini_troll = loadImage("imagens/inimigos/troll.png");
+  img_ini_got_voadora = loadImage("imagens/inimigos/gotinha-voadora.png")
   som_fundo = loadSound('sons/trilha_jogo.mp3');
   som_pulo = loadSound('sons/somPulo.mp3');
 }
@@ -25,8 +33,10 @@ function setup() {
   cenario1 = new Cenario(img_background, posX = 0, windowHeight / 80);
   cenario2 = new Cenario(img_background, posX = windowWidth, windowHeight / 80);
   print(windowWidth, windowHeight);
-  heroi = cria_heroi(img_heroi, som_pulo, 0.3, 4, 4, windowHeight / 30, windowHeight / 3);
-  ini_gotinha = cria_inimigo(img_ini_gotinha, 0.15, 4, 7, windowWidth, windowHeight, windowHeight / 45);
+  heroi = cria_heroi(img_heroi, som_pulo, 0.3, 4, 4, 16, windowHeight / 30, windowHeight / 3, 0.30, 0.3, 0.1, 0.8);
+  cria_inimigo(img_ini_gotinha, 0.15, 4, 7, 28, windowWidth, windowHeight, windowHeight / 45, 0.3, 0.8, 0.2, 0.6);
+  cria_inimigo(img_ini_troll, 0.40, 5, 6, 28, windowWidth + 1600, windowHeight + 20, windowHeight / 45, 0.5, 0.4, 0.17, 0.65);
+  cria_inimigo(img_ini_got_voadora, 0.25, 3, 6, 16, windowWidth + 800, windowHeight * 0.7, windowHeight / 45, 0.40, 0.35, 0.25, 0.5);
   som_fundo.loop();
 }
 
@@ -40,29 +50,35 @@ function draw() {
   func_cenarios(cenario1);
   func_cenarios(cenario2);
   func_herois(heroi);
-  func_inimigos(ini_gotinha);
-  aplica_gravidade(heroi);
-  let colidiu_gotinha = heroi.verifica_colisao(ini_gotinha, 0.60);
-  if (colidiu_gotinha) {
-    noLoop();
-    som_fundo.stop()
+  for (obj_inimigo of lista_inimigos) {
+    func_inimigos(obj_inimigo);
+    if (heroi.verifica_colisao(obj_inimigo, false)) {
+      noLoop();
+      game_over();
+      som_fundo.stop();
+      break;
+    }
   }
+  aplica_gravidade(heroi);
+  define_pontuacao()
 }
 
 
-function cria_heroi(img_heroi, som_pulo, proporcao, num_colunas, num_linhas, vel_pulo, alt_max_pulo) {
-  let obj_heroi = new Heroi(img_heroi, som_pulo, proporcao, num_colunas, num_linhas);
+function cria_heroi(img_heroi, som_pulo, proporcao, num_colunas, num_linhas, total_sprits, vel_pulo, alt_max_pulo, precisao_x_inicial, precisao_x_final, precisao_y_inicial, precisao_y_final) {
+  let obj_heroi = new Heroi(img_heroi, som_pulo, proporcao, num_colunas, num_linhas, total_sprits);
   obj_heroi.define_pos_ini(pos_ini_x = 0, pos_ini_y = windowHeight - obj_heroi.altura_pers_prop)
   obj_heroi.define_pular(vel_pulo, alt_max_pulo)
+  obj_heroi.define_shap(precisao_x_inicial, precisao_x_final, precisao_y_inicial, precisao_y_final)
   return obj_heroi
 }
 
 
-function cria_inimigo(imagem_inimigo, proporcao, num_colunas, num_linhas, pos_ini_x, pos_ini_y, velocidade) {
-  let obj_ini = new Inimigo(imagem = imagem_inimigo, proporcao = proporcao, num_colunas = num_colunas, num_linhas = num_linhas)
+function cria_inimigo(imagem_inimigo, proporcao, num_colunas, num_linhas, total_sprits, pos_ini_x, pos_ini_y, velocidade, precisao_x_inicial, precisao_x_final, precisao_y_inicial, precisao_y_final) {
+  let obj_ini = new Inimigo(imagem_inimigo, proporcao, num_colunas, num_linhas, total_sprits)
   obj_ini.define_pos_ini(pos_ini_x = pos_ini_x - obj_ini.largura_pers_prop, pos_ini_y = pos_ini_y - obj_ini.altura_pers_prop)
   obj_ini.define_velocidade(velocidade)
-  return obj_ini
+  obj_ini.define_shap(precisao_x_inicial, precisao_x_final, precisao_y_inicial, precisao_y_final)
+  lista_inimigos.push(obj_ini)
 }
 
 
@@ -84,11 +100,25 @@ function func_herois(obj_heroi) {
 }
 
 function func_inimigos(obj_inimigo) {
-  obj_inimigo.exibe()
+  obj_inimigo.exibe();
   obj_inimigo.move();
 }
 
 function func_cenarios(obj_cenario) {
   obj_cenario.exibe();
   obj_cenario.anim_spriter();
+}
+
+function define_pontuacao() {
+  pontuacao += pontuacao_adcional;
+  textSize(windowHeight * 0.20);
+  textAlign(RIGHT)
+  fill('rgb(100%,0%,10%)');
+  text(parseInt(pontuacao), windowWidth * 0.98, windowHeight * 0.2)
+}
+
+function game_over() {
+  largura_prop = ((0.35 - (img_game_over.width / windowWidth)) * windowWidth) + img_game_over.width;
+  altura_prop = ((0.35 - (img_game_over.height / windowHeight)) * windowHeight) + img_game_over.height;
+  image(img_game_over, windowWidth * 0.3, windowHeight * 0.4, largura_prop, altura_prop);
 }
