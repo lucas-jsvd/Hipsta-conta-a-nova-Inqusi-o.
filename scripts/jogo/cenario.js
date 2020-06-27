@@ -1,18 +1,19 @@
 class Cenario {
-  constructor(imagem, posX, velocidade) {
+  constructor(imagem, pos_x_inicial, velocidade) {
     this.imagem = imagem;
-    this.posX = posX
-    this.velocidade = velocidade
+    this.pos_x_atual = pos_x_inicial;
+    this.velocidade = velocidade;
   }
 
   exibe() {
-    image(this.imagem, this.posX, 0, windowWidth, windowHeight);
+    image(this.imagem, this.pos_x_atual, 0, windowWidth, windowHeight);
   }
 
   anim_spriter() {
-    if (this.posX <= - windowWidth) {
-      this.posX = posX
+    if (this.pos_x_atual <= -windowWidth) {
+      this.pos_x_atual = windowWidth;
     }
-    this.posX -= this.velocidade
+    this.pos_x_atual -= this.velocidade;
+    print(this.pos_x_atual)
   }
 }
