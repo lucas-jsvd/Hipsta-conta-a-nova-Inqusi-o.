@@ -34,7 +34,7 @@ function draw() {
   fase1.draw()
   func_herois(heroi);
   for (obj_inimigo of fase1.lista_inimigos) {
-    if (heroi.verifica_colisao(obj_inimigo, false)) {
+    if (heroi.verifica_colisao(obj_inimigo, true)) {
       noLoop();
       game_over();
       fase1.som_fundo.stop();

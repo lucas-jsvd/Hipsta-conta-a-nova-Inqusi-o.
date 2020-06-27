@@ -14,6 +14,5 @@ class Cenario {
       this.pos_x_atual = windowWidth;
     }
     this.pos_x_atual -= this.velocidade;
-    print(this.pos_x_atual)
   }
 }

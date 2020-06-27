@@ -22,9 +22,9 @@ class Fase {
     setup() {
         this.cria_cenario(this.img_background, 0, windowHeight / 80);
         this.cria_cenario(this.img_background, windowWidth, windowHeight / 80);
-        this.cria_inimigo(this.img_ini_gotinha, 0.15, 4, 7, 28, windowWidth, windowHeight, windowHeight / 45, 0.3, 0.8, 0.2, 0.6);
-        this.cria_inimigo(this.img_ini_troll, 0.40, 5, 6, 28, windowWidth + 1600, windowHeight + 20, windowHeight / 45, 0.5, 0.4, 0.17, 0.65);
-        this.cria_inimigo(this.img_ini_got_voadora, 0.25, 3, 6, 16, windowWidth + 800, windowHeight * 0.7, windowHeight / 45, 0.40, 0.35, 0.25, 0.5);
+        this.cria_inimigo(this.img_ini_gotinha, 0.15, 4, 7, 28, windowWidth, windowHeight, windowHeight / 40, 0.3, 0.8, 0.2, 0.6);
+        this.cria_inimigo(this.img_ini_troll, 0.40, 5, 6, 28, windowWidth + 600, windowHeight + 20, windowHeight / 45, 0.5, 0.4, 0.17, 0.65);
+        this.cria_inimigo(this.img_ini_got_voadora, 0.25, 3, 6, 16, windowWidth + 1200, windowHeight * 0.7, windowHeight / 42, 0.4, 0.35, 0.25, 0.5);
         this.som_fundo.loop();
     }
 
@@ -47,9 +47,23 @@ class Fase {
     }
 
     func_inimigos(lista_inimigos) {
-        for (let obj_inimigo of lista_inimigos) {
-            obj_inimigo.exibe();
-            obj_inimigo.move();
+        let indice_anterior;
+        for (let indice = 0; indice < this.lista_inimigos.length; indice ++ ){
+            lista_inimigos[indice].exibe();
+            lista_inimigos[indice].move();
+            if (lista_inimigos[indice].fora_tela) {
+                let variacao_distancia = random(500, 800);
+                if (indice - 1 < 0){
+                    indice_anterior = lista_inimigos.length - 1;
+                } else {
+                    indice_anterior = indice - 1;
+                }
+                let nova_pos_inicial = lista_inimigos[indice_anterior].pos_atual_x + variacao_distancia;
+                if (nova_pos_inicial < windowWidth){
+                    nova_pos_inicial = windowWidth + lista_inimigos[indice_anterior].largura_personagem + variacao_distancia;
+                }
+                lista_inimigos[indice].reposiciona(nova_pos_inicial);
+            }
         }
     }
 
@@ -59,7 +73,4 @@ class Fase {
             obj_cenario.anim_spriter();
         }
     }
-
-
-
 }
