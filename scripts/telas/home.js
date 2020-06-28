@@ -1,16 +1,10 @@
 'use strict'
 
 class Home {
-  constructor (arqBackground, texto, arqFont) {
-    this.arqBackground = arqBackground
+  constructor (imgTelaInicial, texto, arqFont) {
+    this.imgTelaInicial = imgTelaInicial
     this.texto = texto
     this.arqFont = arqFont
-    this.botao
-  }
-
-  preload () {
-    this.background = loadImage(this.arqBackground)
-    this.font = loadFont(this.arqFont)
   }
 
   setup () {
@@ -18,7 +12,7 @@ class Home {
   }
 
   draw () {
-    image(this.background, 0, 0, windowWidth, windowHeight)
+    image(this.imgTelaInicial, 0, 0, windowWidth, windowHeight)
     this.desenharTexto()
     this.botao.mousePressed(() => this.mudar_fase())
   }
@@ -26,7 +20,7 @@ class Home {
   desenharTexto () {
     fill('black')
     textSize(windowWidth / 10)
-    textFont(this.font)
+    textFont(this.arqFont)
     textAlign(CENTER)
     text(this.texto, windowWidth / 2, windowHeight / 3)
   }

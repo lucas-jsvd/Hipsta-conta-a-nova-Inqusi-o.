@@ -1,25 +1,20 @@
 'use strict'
 
 class Fase {
-  constructor () {
+  constructor (imgBackground, listaImgInimigos, somFundo) {
     this.listaInimigos = []
     this.listaCenarios = []
-  }
-
-  preload () {
-    this.imgBackground = loadImage('imagens/cenario/floresta.png')
-    this.imgIniGotinha = loadImage('imagens/inimigos/gotinha.png')
-    this.imgIniTroll = loadImage('imagens/inimigos/troll.png')
-    this.imgIniGotVoadora = loadImage('imagens/inimigos/gotinha-voadora.png')
-    this.somFundo = loadSound('sons/trilha_jogo.mp3')
+    this.lista_img_inimigos = listaImgInimigos
+    this.imgBackground = imgBackground
+    this.somFundo = somFundo
   }
 
   setup () {
     this.criaCenario(this.imgBackground, 0, windowHeight / 80)
     this.criaCenario(this.imgBackground, windowWidth, windowHeight / 80)
-    this.criaInimigo(this.imgIniGotinha, 0.15, 4, 7, 28, windowWidth, windowHeight, windowHeight / 40, 0.3, 0.8, 0.2, 0.6)
-    this.criaInimigo(this.imgIniTroll, 0.40, 5, 6, 28, windowWidth + 600, windowHeight + 20, windowHeight / 45, 0.5, 0.4, 0.17, 0.65)
-    this.criaInimigo(this.imgIniGotVoadora, 0.25, 3, 6, 16, windowWidth + 1200, windowHeight * 0.7, windowHeight / 42, 0.4, 0.35, 0.25, 0.5)
+    this.criaInimigo(this.lista_img_inimigos[0], 0.15, 4, 7, 28, windowWidth, windowHeight, windowHeight / 40, 0.3, 0.8, 0.2, 0.6)
+    this.criaInimigo(this.lista_img_inimigos[1], 0.40, 5, 6, 28, windowWidth + 600, windowHeight + 20, windowHeight / 45, 0.5, 0.4, 0.17, 0.65)
+    this.criaInimigo(this.lista_img_inimigos[2], 0.25, 3, 6, 16, windowWidth + 1200, windowHeight * 0.7, windowHeight / 42, 0.4, 0.35, 0.25, 0.5)
     this.somFundo.loop()
   }
 

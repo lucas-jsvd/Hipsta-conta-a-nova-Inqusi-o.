@@ -12,32 +12,45 @@ let fase1
 let home
 let listaFase = []
 let indiceFaseAtual = 0
+let imgBackground
+let imgTelaInicial
+let arqFont
+let somFundo
+let imgGotinha
+let imgTroll
+let imgGotVoador
 
 function adcionarFase (fase) {
   listaFase.push(fase)
 }
 
 function preload () {
-  home = new Home('imagens/telas/telaInicial.png', 'Hipsta conta a nova\n Inquisicao', 'imagens/font/fonteTelaInicial.otf')
-  adcionarFase(home)
-  fase1 = new Fase()
-  adcionarFase(fase1)
-  for (const cena of listaFase) {
-    realizaPreload(cena)
-  }
+  imgTelaInicial = loadImage('imagens/telas/telaInicial.png')
+  imgBackground = loadImage('imagens/cenario/floresta.png')
+  arqFont = loadFont('imagens/font/fonteTelaInicial.otf')
   imgGameOver = loadImage('imagens/telas/game-over.png')
   imgHeroi = loadImage('imagens/personagem/correndo.png')
   somPulo = loadSound('sons/somPulo.mp3')
+  somFundo = loadSound('sons/trilha_jogo.mp3')
+  imgGotinha = loadImage('imagens/inimigos/gotinha.png')
+  imgTroll = loadImage('imagens/inimigos/troll.png')
+  imgGotVoador = loadImage('imagens/inimigos/gotinha-voadora.png')
 }
 
 function setup () {
   createCanvas(windowWidth, windowHeight)
   frameRate(FR)
   gravidade = windowHeight / 35
-  for (const cena of listaFase) {
-    realizaSetup(cena)
-  }
+  defineSetup()
+  realizaSetup(listaFase)
   heroi = criaHeroi(imgHeroi, somPulo, 0.3, 4, 4, 16, windowHeight / 30, windowHeight / 3, 0.30, 0.3, 0.1, 0.8)
+}
+
+function defineSetup () {
+  home = new Home(imgTelaInicial, 'Hipsta conta a nova\n Inquisicao', arqFont)
+  adcionarFase(home)
+  fase1 = new Fase(imgBackground, [imgGotinha, imgTroll, imgGotVoador], somFundo)
+  adcionarFase(fase1)
 }
 
 function keyPressed () {
@@ -56,12 +69,10 @@ function draw () {
   }
 }
 
-function realizaPreload (fase) {
-  fase.preload()
-}
-
-function realizaSetup (fase) {
-  fase.setup()
+function realizaSetup (listaFase) {
+  for (const objFase of listaFase) {
+    objFase.setup()
+  }
 }
 
 function criaHeroi (imgHeroi, somPulo, proporcao, numcolunas, numLinhas, totalSprits, velPulo, altMaxPulo, precisaoXInicial, precisaoFinal, precisaoYInicial, precisaoYFinal) {
@@ -115,8 +126,10 @@ function colidiu (fase, heroi) {
   }
 }
 
-function reiniar(){
+function reiniar () {
   indiceFaseAtual = 0
-  listaFase[indiceFaseAtual].cria_botao()
-  loop();
+  listaFase = []
+  defineSetup()
+  realizaSetup(listaFase)
+  loop()
 }
