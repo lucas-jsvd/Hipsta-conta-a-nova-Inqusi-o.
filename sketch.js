@@ -9,10 +9,22 @@ let heroi
 let pontuacao = 0
 const PONTADICIONAL = 4 / FR
 let fase1
+let home
+let listaFase = []
+let indiceFaseAtual = 0
+
+function adcionarFase (fase) {
+  listaFase.push(fase)
+}
 
 function preload () {
+  home = new Home('imagens/telas/telaInicial.png', 'Hipsta conta a nova\n Inquisicao', 'imagens/font/fonteTelaInicial.otf')
+  adcionarFase(home)
   fase1 = new Fase()
-  fase1.preload()
+  adcionarFase(fase1)
+  for (const cena of listaFase) {
+    realizaPreload(cena)
+  }
   imgGameOver = loadImage('imagens/telas/game-over.png')
   imgHeroi = loadImage('imagens/personagem/correndo.png')
   somPulo = loadSound('sons/somPulo.mp3')
@@ -22,8 +34,10 @@ function setup () {
   createCanvas(windowWidth, windowHeight)
   frameRate(FR)
   gravidade = windowHeight / 35
+  for (const cena of listaFase) {
+    realizaSetup(cena)
+  }
   heroi = criaHeroi(imgHeroi, somPulo, 0.3, 4, 4, 16, windowHeight / 30, windowHeight / 3, 0.30, 0.3, 0.1, 0.8)
-  fase1.setup()
 }
 
 function keyPressed () {
@@ -33,11 +47,21 @@ function keyPressed () {
 }
 
 function draw () {
-  fase1.draw()
-  funcHerois(heroi)
-  aplicaGravidade(heroi)
-  definePontuacao()
-  colidiu(fase1, heroi)
+  listaFase[indiceFaseAtual].draw()
+  if (indiceFaseAtual > 0) {
+    funcHerois(heroi)
+    aplicaGravidade(heroi)
+    definePontuacao()
+    colidiu(listaFase[indiceFaseAtual], heroi)
+  }
+}
+
+function realizaPreload (fase) {
+  fase.preload()
+}
+
+function realizaSetup (fase) {
+  fase.setup()
 }
 
 function criaHeroi (imgHeroi, somPulo, proporcao, numcolunas, numLinhas, totalSprits, velPulo, altMaxPulo, precisaoXInicial, precisaoFinal, precisaoYInicial, precisaoYFinal) {
@@ -84,8 +108,15 @@ function colidiu (fase, heroi) {
     if (heroi.verificaColisao(OBJINIMIGO, false)) {
       noLoop()
       gameOver()
+      setTimeout(reiniar, 1000 * 5)
       fase.somFundo.stop()
       break
     }
   }
+}
+
+function reiniar(){
+  indiceFaseAtual = 0
+  listaFase[indiceFaseAtual].cria_botao()
+  loop();
 }
