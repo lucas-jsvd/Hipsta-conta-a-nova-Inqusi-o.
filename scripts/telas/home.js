@@ -27,7 +27,7 @@ class Home {
 
   cria_botao () {
     this.botao = createButton('Jogar')
-    this.botao.position(windowWidth / 2.35, windowHeight / 6 * 4)
+    this.botao.position(windowWidth / 2.5, windowHeight / 6 * 4)
     this.botao.addClass('botao-tela-inicial')
   }
 

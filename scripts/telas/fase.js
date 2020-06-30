@@ -42,7 +42,7 @@ class Fase {
       listaInimigos[indice].exibe()
       listaInimigos[indice].move()
       if (listaInimigos[indice].foraTela) {
-        const variacaoDistancia = random(500, 800)
+        const variacaoDistancia = random(windowWidth/2, windowWidth/1.2)
         if (indice - 1 < 0) {
           indiceAnterior = listaInimigos.length - 1
         } else {

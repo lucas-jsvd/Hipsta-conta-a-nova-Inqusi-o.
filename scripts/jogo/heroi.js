@@ -1,7 +1,7 @@
 'use strict'
 
 class Heroi extends Personagem {
-  constructor (imagem, somPulo, proporcao, numColunas, numLinhas, totalSprits) {
+  constructor (imagem, somPulo, proporcao, numColunas, numLinhas, totalSprits, quantVida) {
     super(imagem, proporcao, numColunas, numLinhas, totalSprits)
     this.velPulo = 0
     this.altMaxPulo = 0
@@ -11,6 +11,8 @@ class Heroi extends Personagem {
     this.quantPuloAtual = 0
     this.posPuloY = 0
     this.somPulo = somPulo
+    this.quantVida = quantVida
+    this.imune = false
   }
 
   definePular (velPulo, altMaxPulo) {
@@ -46,5 +48,14 @@ class Heroi extends Personagem {
     }
     const colidiu = collideRectRect(this.posAtualX + (this.larguraPersProp * this.precisaoXInicial), this.posAtualY + (this.alturaPersProp * this.precisaoYInicial), this.larguraPersProp * this.precisaoXFinal, this.alturaPersProp * this.precisaoYFinal, objInimigo.posAtualX + (objInimigo.larguraPersProp * objInimigo.precisaoXInicial), objInimigo.posAtualY + (objInimigo.alturaPersProp * objInimigo.precisaoYInicial), objInimigo.larguraPersProp * objInimigo.precisaoXFinal, objInimigo.alturaPersProp * objInimigo.precisaoYFinal)
     return colidiu
+  }
+
+  dano () {
+    this.quantVida--
+    this.imunidade()
+  }
+
+  imunidade () {
+    this.imune = !this.imune
   }
 }

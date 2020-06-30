@@ -6,6 +6,7 @@ const FR = 30
 let somPulo
 let gravidade
 let heroi
+let vidaHeroi
 let pontuacao = 0
 const PONTADICIONAL = 4 / FR
 let fase1
@@ -19,6 +20,7 @@ let somFundo
 let imgGotinha
 let imgTroll
 let imgGotVoador
+let imgVida
 
 function adcionarFase (fase) {
   listaFase.push(fase)
@@ -29,6 +31,7 @@ function preload () {
   imgBackground = loadImage('imagens/cenario/floresta.png')
   arqFont = loadFont('imagens/font/fonteTelaInicial.otf')
   imgGameOver = loadImage('imagens/telas/game-over.png')
+  imgVida = loadImage('imagens/gui/coracao.png')
   imgHeroi = loadImage('imagens/personagem/correndo.png')
   somPulo = loadSound('sons/somPulo.mp3')
   somFundo = loadSound('sons/trilha_jogo.mp3')
@@ -43,10 +46,11 @@ function setup () {
   gravidade = windowHeight / 35
   defineSetup()
   realizaSetup(listaFase)
-  heroi = criaHeroi(imgHeroi, somPulo, 0.3, 4, 4, 16, windowHeight / 30, windowHeight / 3, 0.30, 0.3, 0.1, 0.8)
 }
 
 function defineSetup () {
+  heroi = criaHeroi(imgHeroi, somPulo, 0.3, 4, 4, 16, windowHeight / 30, windowHeight / 3, 0.30, 0.3, 0.1, 0.8, 3)
+  vidaHeroi = new Vida(imgVida)
   home = new Home(imgTelaInicial, 'Hipsta conta a nova\n Inquisicao', arqFont)
   adcionarFase(home)
   fase1 = new Fase(imgBackground, [imgGotinha, imgTroll, imgGotVoador], somFundo)
@@ -66,6 +70,7 @@ function draw () {
     aplicaGravidade(heroi)
     definePontuacao()
     colidiu(listaFase[indiceFaseAtual], heroi)
+    funcVida(vidaHeroi, heroi)
   }
 }
 
@@ -75,8 +80,8 @@ function realizaSetup (listaFase) {
   }
 }
 
-function criaHeroi (imgHeroi, somPulo, proporcao, numcolunas, numLinhas, totalSprits, velPulo, altMaxPulo, precisaoXInicial, precisaoFinal, precisaoYInicial, precisaoYFinal) {
-  const OBJHEROI = new Heroi(imgHeroi, somPulo, proporcao, numcolunas, numLinhas, totalSprits)
+function criaHeroi (imgHeroi, somPulo, proporcao, numcolunas, numLinhas, totalSprits, velPulo, altMaxPulo, precisaoXInicial, precisaoFinal, precisaoYInicial, precisaoYFinal, quantVida) {
+  const OBJHEROI = new Heroi(imgHeroi, somPulo, proporcao, numcolunas, numLinhas, totalSprits, quantVida)
   OBJHEROI.definePosIni(0, windowHeight - OBJHEROI.alturaPersProp)
   OBJHEROI.definePular(velPulo, altMaxPulo)
   OBJHEROI.defineShap(precisaoXInicial, precisaoFinal, precisaoYInicial, precisaoYFinal)
@@ -100,6 +105,10 @@ function funcHerois (OBJHEROI) {
   OBJHEROI.pular()
 }
 
+function funcVida (vida, heroi) {
+  vida.draw(heroi)
+}
+
 function definePontuacao () {
   pontuacao += PONTADICIONAL
   textSize(windowHeight * 0.20)
@@ -108,20 +117,27 @@ function definePontuacao () {
   text(parseInt(pontuacao), windowWidth * 0.98, windowHeight * 0.2)
 }
 
-function gameOver () {
+function gameOver (fase) {
+  noLoop()
   const LARGURAPROP = ((0.35 - (imgGameOver.width / windowWidth)) * windowWidth) + imgGameOver.width
   const alturaProp = ((0.35 - (imgGameOver.height / windowHeight)) * windowHeight) + imgGameOver.height
   image(imgGameOver, windowWidth * 0.3, windowHeight * 0.4, LARGURAPROP, alturaProp)
+  setTimeout(reiniar, 1000 * 5)
+  fase.somFundo.stop()
 }
 
 function colidiu (fase, heroi) {
-  for (const OBJINIMIGO of fase.listaInimigos) {
-    if (heroi.verificaColisao(OBJINIMIGO, false)) {
-      noLoop()
-      gameOver()
-      setTimeout(reiniar, 1000 * 5)
-      fase.somFundo.stop()
-      break
+  if (!heroi.imune) {
+    for (const OBJINIMIGO of fase.listaInimigos) {
+      if (heroi.verificaColisao(OBJINIMIGO, false)) {
+        heroi.dano()
+        if (heroi.quantVida === 0) {
+          gameOver(fase)
+          break
+        }
+        setTimeout(() => heroi.imunidade(), 1000)
+        break
+      }
     }
   }
 }
